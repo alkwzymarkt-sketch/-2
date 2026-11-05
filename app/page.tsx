@@ -1,4 +1,230 @@
+"use client";
 
+import { useState } from "react";
+
+export default function Home() {
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function sendOTP() {
+    if (!/^7[0-9]{8}$/.test(phone)) {
+      setError("شماره موبایل باید ۹ رقم باشد و با 7 شروع شود.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: "+93" + phone }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "ارسال کد ناموفق بود");
+
+      setStep(2);
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function verifyOTP() {
+    if (!/^[0-9]{6}$/.test(otp)) {
+      setError("کد تأیید باید ۶ رقم باشد.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: "+93" + phone,
+          code: otp,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "کد تأیید اشتباه است");
+
+      window.location.href = "/";
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main dir="rtl" style={{
+      minHeight: "100vh",
+      background: "#f1f5f9",
+      fontFamily: "Tahoma, sans-serif",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20
+    }}>
+      <div style={{
+        background: "white",
+        width: "100%",
+        maxWidth: 420,
+        padding: 28,
+        borderRadius: 22,
+        boxShadow: "0 8px 35px #0001",
+        textAlign: "center"
+      }}>
+        <div style={{ fontSize: 55 }}>🇦🇫</div>
+
+        <h1 style={{ color: "#087443" }}>
+          افغان بازار
+        </h1>
+
+        <p style={{ color: "#64748b" }}>
+          بازار آنلاین افغانستان
+        </p>
+
+        {step === 1 ? (
+          <>
+            <h3>ثبت‌نام و ورود</h3>
+
+            <p>شماره موبایل افغانستان خود را وارد کنید.</p>
+
+            <div style={{
+              display: "flex",
+              gap: 8,
+              marginTop: 20
+            }}>
+              <div style={{
+                background: "#e2e8f0",
+                padding: 15,
+                borderRadius: 10
+              }}>
+                +93
+              </div>
+
+              <input
+                type="tel"
+                inputMode="numeric"
+                value={phone}
+                onChange={e =>
+                  setPhone(e.target.value.replace(/\D/g, "").slice(0, 9))
+                }
+                placeholder="شماره موبایل"
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  padding: 14,
+                  border: "1px solid #cbd5e1",
+                  borderRadius: 10,
+                  fontSize: 16
+                }}
+              />
+            </div>
+
+            <button
+              onClick={sendOTP}
+              disabled={loading}
+              style={buttonStyle}
+            >
+              {loading ? "در حال ارسال..." : "ارسال کد تأیید"}
+            </button>
+          </>
+        ) : (
+          <>
+            <h3>تأیید شماره موبایل</h3>
+
+            <p>کد ۶ رقمی ارسال‌شده را وارد کنید.</p>
+
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={otp}
+              onChange={e =>
+                setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+              }
+              placeholder="------"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                padding: 16,
+                marginTop: 20,
+                textAlign: "center",
+                fontSize: 25,
+                letterSpacing: 8,
+                border: "1px solid #cbd5e1",
+                borderRadius: 10
+              }}
+            />
+
+            <button
+              onClick={verifyOTP}
+              disabled={loading}
+              style={buttonStyle}
+            >
+              {loading ? "در حال بررسی..." : "تأیید و ورود"}
+            </button>
+
+            <button
+              onClick={() => {
+                setStep(1);
+                setOtp("");
+                setError("");
+              }}
+              style={{
+                background: "none",
+                border: 0,
+                color: "#087443",
+                padding: 15
+              }}
+            >
+              تغییر شماره موبایل
+            </button>
+          </>
+        )}
+
+        {error && (
+          <p style={{ color: "red", fontSize: 13 }}>
+            {error}
+          </p>
+        )}
+
+        <hr style={{ margin: "25px 0", borderColor: "#eee" }} />
+
+        <p style={{ fontSize: 12, color: "#94a3b8" }}>
+          خرید و فروش آسان در سراسر افغانستان
+        </p>
+      </div>
+    </main>
+  );
+}
+
+const buttonStyle = {
+  width: "100%",
+  padding: 16,
+  marginTop: 20,
+  background: "#087443",
+  color: "white",
+  border: 0,
+  borderRadius: 10,
+  fontSize: 16,
+  fontWeight: "bold" as const,
+  cursor: "pointer"
+};
 "use client";
 
 import { useState } from "react";
