@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   try {
     const { phone } = await req.json();
 
-    if (!phone || !/^9[0-9]{8}$/.test(phone)) {
+    if (!phone || !/^7[0-9]{8}$/.test(phone)) {
       return NextResponse.json(
         { error: "شماره موبایل افغانستان معتبر نیست." },
         { status: 400 }
