@@ -66,13 +66,6 @@ enum AdminRole {
   ORDER_MANAGER
 }
 
-enum ProductStatus {
-  PENDING
-  ACTIVE
-  REJECTED
-  VIP
-}
-
 enum SubscriptionStatus {
   TRIAL
   ACTIVE
