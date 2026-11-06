@@ -66,73 +66,77 @@ enum AdminRole {
   ORDER_MANAGER
 }
 
-
 model User {
-  id           String     @id @default(cuid())
-  phone        String     @unique
-  fullName     String?
-  avatarUrl    String?
-  province     String?
-  district     String?
-  status       UserStatus @default(PENDING)
+  id              String     @id @default(cuid())
+  phone           String     @unique
+  fullName        String?
+  avatarUrl       String?
+  province        String?
+  district        String?
+  status          UserStatus @default(PENDING)
   phoneVerifiedAt DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  stores       Store[]
-  orders       Order[]    @relation("BuyerOrders")
-  admin        AdminAccount?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  stores Store[]
+  orders Order[] @relation("BuyerOrders")
+  admin  AdminAccount?
 }
 
 model AdminAccount {
-  id        String    @id @default(cuid())
-  userId    String    @unique
-  role      AdminRole
-  active    Boolean   @default(true)
-  user      User      @relation(fields: [userId], references: [id])
+  id     String    @id @default(cuid())
+  userId String    @unique
+  role   AdminRole
+  active Boolean   @default(true)
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Store {
-  id          String      @id @default(cuid())
-  ownerId     String
-  name        String
-  slug        String      @unique
-  description String?
-  logoUrl     String?
-  coverUrl    String?
-  province    String
-  district    String?
-  address     String?
-  publicPhone String?
-  status      StoreStatus @default(PENDING)
-  createdAt   DateTime    @default(now())
-  owner       User        @relation(fields: [ownerId], references: [id])
-  products    Product[]
+  id           String      @id @default(cuid())
+  ownerId      String
+  name         String
+  slug         String      @unique
+  description  String?
+  logoUrl      String?
+  coverUrl     String?
+  province     String
+  district     String?
+  address      String?
+  publicPhone  String?
+  status       StoreStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
+
+  owner        User              @relation(fields: [ownerId], references: [id])
+  products     Product[]
   subscription StoreSubscription?
 }
 
 model SubscriptionPlan {
-  id          String           @id @default(cuid())
-  tier        SubscriptionTier @unique
-  title       String
-  price       Int              @default(0)
-  currency    String           @default("AFN")
-  durationDays Int             @default(30)
-  enabled     Boolean          @default(true)
-  updatedAt   DateTime         @updatedAt
+  id           String           @id @default(cuid())
+  tier         SubscriptionTier @unique
+  title        String
+  price        Int              @default(0)
+  currency     String           @default("AFN")
+  durationDays Int              @default(30)
+  enabled      Boolean          @default(true)
+  updatedAt    DateTime         @updatedAt
+
   subscriptions StoreSubscription[]
 }
 
 model StoreSubscription {
-  id        String             @id @default(cuid())
-  storeId   String             @unique
-  planId    String
-  status    SubscriptionStatus @default(TRIAL)
-  startsAt  DateTime           @default(now())
-  endsAt    DateTime
-  freeTrial Boolean            @default(true)
-  exempted  Boolean            @default(false)
-  store     Store              @relation(fields: [storeId], references: [id])
-  plan      SubscriptionPlan   @relation(fields: [planId], references: [id])
+  id         String             @id @default(cuid())
+  storeId    String             @unique
+  planId     String
+  status     SubscriptionStatus @default(TRIAL)
+  startsAt   DateTime           @default(now())
+  endsAt     DateTime
+  freeTrial  Boolean            @default(true)
+  exempted   Boolean            @default(false)
+
+  store Store           @relation(fields: [storeId], references: [id])
+  plan  SubscriptionPlan @relation(fields: [planId], references: [id])
 }
 
 model Category {
@@ -141,6 +145,7 @@ model Category {
   namePs   String?
   nameEn   String?
   active   Boolean   @default(true)
+
   products Product[]
 }
 
@@ -156,40 +161,44 @@ model Product {
   province    String
   status      ProductStatus @default(PENDING)
   createdAt   DateTime      @default(now())
-  store       Store         @relation(fields: [storeId], references: [id])
-  category    Category      @relation(fields: [categoryId], references: [id])
-  images      ProductImage[]
-  orderItems  OrderItem[]
+
+  store      Store         @relation(fields: [storeId], references: [id])
+  category   Category      @relation(fields: [categoryId], references: [id])
+  images     ProductImage[]
+  orderItems OrderItem[]
 }
 
 model ProductImage {
   id        String  @id @default(cuid())
   productId String
   url       String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  orderNumber String      @unique
-  buyerId     String
-  status      OrderStatus @default(PENDING)
-  total       Int
-  currency    String      @default("AFN")
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  buyerId         String
+  status          OrderStatus @default(PENDING)
+  total           Int
+  currency        String      @default("AFN")
   deliveryAddress String
-  createdAt   DateTime    @default(now())
-  buyer       User        @relation("BuyerOrders", fields: [buyerId], references: [id])
-  items       OrderItem[]
+  createdAt       DateTime    @default(now())
+
+  buyer User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  items OrderItem[]
 }
 
 model OrderItem {
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   orderId   String
   productId String
   quantity  Int
   unitPrice Int
-  order     Order   @relation(fields: [orderId], references: [id])
-  product   Product @relation(fields: [productId], references: [id])
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
 
 model Advertisement {
