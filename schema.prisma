@@ -66,38 +66,6 @@ enum AdminRole {
   ORDER_MANAGER
 }
 
-enum SubscriptionStatus {
-  TRIAL
-  ACTIVE
-  EXPIRED
-  CANCELLED
-}
-
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PREPARING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-}
-
-enum AdStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  ACTIVE
-  ENDED
-  PAUSED
-}
-
-enum AdminRole {
-  OWNER
-  ADMIN
-  PRODUCT_SUPPORT
-  CUSTOMER_SUPPORT
-  ORDER_MANAGER
-}
 
 model User {
   id           String     @id @default(cuid())
