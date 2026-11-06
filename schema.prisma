@@ -65,21 +65,11 @@ enum AdminRole {
   CUSTOMER_SUPPORT
   ORDER_MANAGER
 }
-  APPROVED
-  REJECTED
-  SUSPENDED
-}
 
 enum ProductStatus {
   PENDING
   ACTIVE
   REJECTED
-  HIDDEN
-}
-
-enum SubscriptionTier {
-  NORMAL
-  SPECIAL
   VIP
 }
 
