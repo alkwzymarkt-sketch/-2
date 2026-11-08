@@ -1,3 +1,4 @@
+// Afghan Bazar Updated Version
 // Afghan Bazar - Updated Prisma Schema
 generator client {
   provider = "prisma-client-js"
@@ -8,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserStatus {
+enum UserStatus {ض
   ACTIVE
   BLOCKED
   PENDING
